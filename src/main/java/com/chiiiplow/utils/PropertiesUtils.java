@@ -1,10 +1,10 @@
 package com.chiiiplow.utils;
 
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -12,23 +12,31 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PropertiesUtils {
 
-//     private static final Logger
+    private static final String APPLICATION_YAML = "application.yml";
 
-    private static final Properties props = new Properties();
+    private static final Yaml yaml = new Yaml();
 
-    private static final Map<String,String> PROPERTIES_MAP =new ConcurrentHashMap<>();
+    private static final Map<String, String> PROPERTIES_MAP = new ConcurrentHashMap<>();
 
 
     static {
-        try (InputStream is = PropertiesUtils.class.getClassLoader().getResourceAsStream("application.properties")){
-            props.load(is);
-            Iterator<Object> iterator = props.keySet().iterator();
-            while (iterator.hasNext()){
-                String key =(String) iterator.next();
-                PROPERTIES_MAP.put(key,props.getProperty(key));
-            }
+        try (InputStream is = PropertiesUtils.class.getClassLoader().getResourceAsStream(APPLICATION_YAML)) {
+            Map<String, Object> map = yaml.load(is);
+            analyzeMap(map, "");
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+
+    private static void analyzeMap(Map<String, Object> map, String parentKey) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String currentKey = parentKey.isEmpty() ? entry.getKey() : parentKey + "." + entry.getKey();
+            if (entry.getValue() instanceof Map) {
+                analyzeMap((Map<String, Object>) entry.getValue(), currentKey);
+            } else {
+                PROPERTIES_MAP.put(currentKey, entry.getValue().toString());
+            }
         }
     }
 
@@ -38,7 +46,4 @@ public class PropertiesUtils {
     }
 
 
-//    public static void main(String[] args) {
-//        System.out.println(getValueFromMap("db.username"));
-//    }
 }

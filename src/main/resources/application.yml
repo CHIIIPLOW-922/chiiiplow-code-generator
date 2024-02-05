@@ -1,0 +1,46 @@
+db:
+  driver:
+    name: com.mysql.jdbc.Driver
+  url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8
+  username: root
+  password: 123456
+ignore:
+  table:
+    prefix: true
+suffix:
+  bean:
+    param: Query
+    mapper: Mapper
+    fuzzy: Fuzzy
+    time:
+      start: Start
+      end: End
+path:
+  base: E:/My Java/generator/demo/src/main/
+package:
+  base: com.chiiiplow
+  po: entity.po
+  utils: utils
+  mappers: mappers
+  query: entity.query
+  enums: entity.enums
+  vo: entity.vo
+  exception: exception
+  service: service
+  service.impl: impl
+  controller: controller
+project:
+  author: CHIIIPLOW
+bean:
+  date:
+    format:
+      expression: "@JsonFormat(pattern = \"%s\", timezone = \"GMT+8\")"
+      class: "import com.fasterxml.jackson.annotation.JsonFormat;"
+    deserialization:
+      expression: "@DateTimeFormat(pattern = \"%s\")"
+      class: "import org.springframework.format.annotation.DateTimeFormat;"
+  json:
+    ignore:
+      fields: dr,tenant_id
+      expression: "@JsonIgnore"
+      class: "import com.fasterxml.jackson.annotation.JsonIgnore;"
